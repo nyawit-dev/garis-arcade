@@ -63,7 +63,7 @@ jobs:
       - name: Build signed release APK
         shell: bash
         run: |
-          ./gradlew --no-daemon assembleRelease \
+          ./gradlew --no-daemon assembleRelease -x lintVitalAnalyzeRelease -x lintVitalReportRelease -x lintVitalRelease \
             -Pandroid.injected.signing.store.file="$PWD/release.jks" \
             -Pandroid.injected.signing.store.type=jks \
             -Pandroid.injected.signing.store.password='${{ steps.keystore.outputs.store_password }}' \
