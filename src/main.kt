@@ -1,8 +1,7 @@
 import korlibs.korge.Korge
 import korlibs.korge.scene.Scene
 import korlibs.korge.scene.sceneContainer
-import korlibs.korge.view.centerX
-import korlibs.korge.view.text
+import korlibs.korge.view.*
 import korlibs.image.color.Colors
 import korlibs.math.geom.Size
 
