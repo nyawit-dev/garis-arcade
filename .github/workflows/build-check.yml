@@ -15,5 +15,5 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
       - name: Make gradlew executable
         run: chmod +x gradlew
-      - name: Discover Android tasks
-        run: ./gradlew tasks --all 2>&1 | grep -iE 'android|assemble' | head -100
+      - name: List all tasks
+        run: ./gradlew tasks --all 2>&1 | head -180
