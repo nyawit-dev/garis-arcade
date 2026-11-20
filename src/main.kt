@@ -1,7 +1,7 @@
 import korlibs.korge.Korge
 import korlibs.korge.scene.Scene
 import korlibs.korge.scene.sceneContainer
-import korlibs.korge.view.text
+import korlibs.korge.view.*
 import korlibs.image.color.Colors
 import korlibs.math.geom.Size
 
@@ -16,12 +16,10 @@ suspend fun main() = Korge(
 class MenuScene : Scene() {
     override suspend fun SContainer.sceneMain() {
         text("GARIS ARCADE", textSize = 42.0, color = Colors.WHITE) {
-            x = 92.0
-            y = 140.0
+            position(sceneWidth / 2 - 180, 140.0)
         }
         text("KorGE - Kotlin Multiplatform", textSize = 20.0, color = Colors["#a0a0c0"]) {
-            x = 96.0
-            y = 210.0
+            position(sceneWidth / 2 - 140, 210.0)
         }
     }
 }
