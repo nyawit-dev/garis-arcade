@@ -14,14 +14,22 @@ import ngga.ring.arcade.ui.MenuScene
 /** Renderer + input untuk Snake. Logika ada di [SnakeEngine]. */
 class SnakeScene : Scene() {
     private val engine = SnakeEngine()
-    private val cell = 24.0
+    private val cell = 20.0
     private var frames = 0
 
     override suspend fun SContainer.sceneMain() {
-        image(resourcesVfs["images/bg_game.png"].readBitmap()) { position(0.0, 0.0) }
+        val w = sceneWidth
+        val boardW = engine.columns * cell
+        val boardH = engine.rows * cell
+        val boardX = (w - boardW) / 2.0
+        val boardY = 240.0
+
+        image(resourcesVfs["images/bg_game.png"].readBitmap()) {
+            size(w.toDouble(), sceneHeight.toDouble())
+        }
         image(resourcesVfs["images/board_frame_snake.png"].readBitmap()) {
-            position(60.0, 48.0)
-            size(488.0, 408.0)
+            position(boardX - 8.0, boardY - 8.0)
+            size(boardW + 16.0, boardH + 16.0)
         }
         val headBitmaps = mapOf(
             Direction.UP to resourcesVfs["images/snake_head_up.png"].readBitmap(),
@@ -33,14 +41,17 @@ class SnakeScene : Scene() {
         val foodBitmap = resourcesVfs["images/food.png"].readBitmap()
         val glowBitmap = resourcesVfs["images/food_glow.png"].readBitmap()
 
-        val hud = text("SCORE 0", textSize = 20.0, color = Palette.text) {
-            position(68.0, 18.0)
+        val hud = text("SCORE 0", textSize = 24.0, color = Palette.text) {
+            position(boardX, 120.0)
         }
-        val overlay = text("GAME OVER - tekan R", textSize = 22.0, color = Palette.food) {
-            position(170.0, 250.0)
+        text("PANAH arah | R restart | ESC menu", textSize = 14.0, color = Palette.muted) {
+            position(boardX, 170.0)
+        }
+        val overlay = text("GAME OVER - R", textSize = 24.0, color = Palette.food) {
+            position(boardX + boardW / 2 - 90.0, boardY + boardH / 2)
             visible = false
         }
-        val board = container { position(68.0, 56.0) }
+        val board = container { position(boardX, boardY) }
 
         keys {
             justDown(Key.LEFT) { engine.turn(Direction.LEFT) }
