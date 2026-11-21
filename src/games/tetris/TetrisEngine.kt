@@ -107,6 +107,18 @@ class TetrisEngine(private val random: Random = Random.Default) {
         return false
     }
 
+    /** Posisi jatuh bayangan (ghost) tanpa mengubah state. */
+    fun ghost(): Tetromino? {
+        val piece = current ?: return null
+        var candidate = piece
+        while (true) {
+            val next = candidate.copy(y = candidate.y + 1)
+            if (!isValid(next)) break
+            candidate = next
+        }
+        return candidate
+    }
+
     fun softDrop() {
         step()
     }
