@@ -1,5 +1,3 @@
-package ngga.ring.arcade
-
 import korlibs.image.color.Colors
 import korlibs.korge.Korge
 import korlibs.korge.scene.sceneContainer
