@@ -14,6 +14,11 @@ object Palette {
     val food = Colors["#ff6b6b"]
     val wall = Colors["#2f3150"]
 
+    fun tileText(value: Int) = when (value) {
+        16, 32, 64, 128, 256, 512, 1024, 2048 -> Colors["#1a1a2e"]
+        else -> Colors.WHITE
+    }
+
     fun tile(value: Int) = when (value) {
         0 -> Colors["#2f3150"]
         2 -> Colors["#3b5b7a"]
