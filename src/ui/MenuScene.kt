@@ -16,8 +16,13 @@ import ngga.ring.arcade.games.twozerofour.TwoZeroFourEightScene
  */
 class MenuScene : Scene() {
     override suspend fun SContainer.sceneMain() {
+        image(resourcesVfs["images/bg_menu.png"].readBitmap()) {
+            position(0.0, 0.0)
+        }
+        val cardBitmap = resourcesVfs["images/menu_card.png"].readBitmap()
         image(resourcesVfs["images/logo.png"].readBitmap()) {
-            position(sceneWidth / 2 - 128, 40.0)
+            position(sceneWidth / 2 - 128, 26.0)
+            size(256.0, 64.0)
         }
         text("Pilih game jadul", textSize = 20.0, color = Palette.muted) {
             position(sceneWidth / 2 - 76, 108.0)
@@ -38,7 +43,8 @@ class MenuScene : Scene() {
         items.forEachIndexed { index, item ->
             val y = 148.0 + index * 72.0
             val card = container { position(sceneWidth / 2 - 190, y) }
-            card.solidRect(380.0, 56.0, Palette.panel) {
+            card.image(cardBitmap) {
+                size(380.0, 56.0)
                 onClickSuspend { item.launch() }
             }
             card.text(item.title, textSize = 24.0, color = Palette.accent) {
