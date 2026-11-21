@@ -12,12 +12,20 @@ class TwoZeroFourEightScene : Scene() {
     private val board = Board2048()
     private val cell = 84.0
 
-    private lateinit var tiles: Array<Array<SolidRect>>
+    private lateinit var tiles: Array<Array<Image>>
     private lateinit var labels: Array<Array<Text>>
     private lateinit var hud: Text
     private lateinit var overlay: Text
+    private lateinit var tileBitmaps: Map<Int, korlibs.image.bitmap.Bitmap>
 
     override suspend fun SContainer.sceneMain() {
+        image(resourcesVfs["images/bg_game.png"].readBitmap()) { position(0.0, 0.0) }
+        val values = listOf(0, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048)
+        tileBitmaps = values.associateWith { value ->
+            resourcesVfs["images/tile_$value.png"].readBitmap()
+        }
+        val boardBitmap = resourcesVfs["images/board_2048.png"].readBitmap()
+
         hud = text("SCORE 0", textSize = 20.0, color = Palette.text) {
             position(152.0, 18.0)
         }
@@ -27,10 +35,12 @@ class TwoZeroFourEightScene : Scene() {
         }
 
         val grid = container { position(152.0, 62.0) }
+        grid.image(boardBitmap) { position(0.0, 0.0); size(348.0, 348.0) }
         tiles = Array(board.size) { row ->
             Array(board.size) { col ->
-                grid.solidRect(cell - 6.0, cell - 6.0, Palette.tile(0)) {
+                grid.image(tileBitmaps[0]!!) {
                     position(col * cell, row * cell)
+                    size(cell - 6.0, cell - 6.0)
                 }
             }
         }
@@ -63,8 +73,9 @@ class TwoZeroFourEightScene : Scene() {
         for (row in 0 until board.size) {
             for (col in 0 until board.size) {
                 val value = board.cells[row][col]
-                tiles[row][col].color = Palette.tile(value)
+                tiles[row][col].bitmap = tileBitmaps[value]!!
                 labels[row][col].text = if (value == 0) "" else value.toString()
+                labels[row][col].color = Palette.tileText(value)
             }
         }
         overlay.visible = !board.canMove()
