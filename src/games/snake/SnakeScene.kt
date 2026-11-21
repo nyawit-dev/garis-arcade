@@ -5,13 +5,7 @@ import korlibs.image.format.readBitmap
 import korlibs.io.file.std.resourcesVfs
 import korlibs.korge.input.keys
 import korlibs.korge.scene.Scene
-import korlibs.korge.view.addUpdater
-import korlibs.korge.view.container
-import korlibs.korge.view.image
-import korlibs.korge.view.position
-import korlibs.korge.view.size
-import korlibs.korge.view.solidRect
-import korlibs.korge.view.text
+import korlibs.korge.view.*
 import ngga.ring.arcade.core.Palette
 import ngga.ring.arcade.games.snake.Direction
 import ngga.ring.arcade.games.snake.SnakeEngine
@@ -21,7 +15,7 @@ import ngga.ring.arcade.ui.MenuScene
 class SnakeScene : Scene() {
     private val engine = SnakeEngine()
     private val cell = 24.0
-    private var accumulator = 0.0
+    private var frames = 0
 
     override suspend fun SContainer.sceneMain() {
         val headBitmap = resourcesVfs["images/snake_head.png"].readBitmap()
@@ -42,17 +36,15 @@ class SnakeScene : Scene() {
             justDown(Key.RIGHT) { engine.turn(Direction.RIGHT) }
             justDown(Key.UP) { engine.turn(Direction.UP) }
             justDown(Key.DOWN) { engine.turn(Direction.DOWN) }
-            justDown(Key.R) { engine.reset(); accumulator = 0.0 }
+            justDown(Key.R) { engine.reset(); frames = 0 }
             justDown(Key.ESCAPE) { sceneContainer.changeToAsync<MenuScene>() }
         }
 
-        addUpdater { dt ->
-            if (!engine.gameOver) {
-                accumulator += dt.inWholeMilliseconds / 1000.0
-                while (accumulator >= STEP_SECONDS) {
-                    accumulator -= STEP_SECONDS
-                    engine.step()
-                }
+        addFastUpdater {
+            frames++
+            if (!engine.gameOver && frames >= FRAMES_PER_STEP) {
+                frames = 0
+                engine.step()
             }
             hud.text = "SCORE ${engine.score}"
             overlay.visible = engine.gameOver
@@ -74,6 +66,6 @@ class SnakeScene : Scene() {
     }
 
     private companion object {
-        const val STEP_SECONDS = 0.12
+        const val FRAMES_PER_STEP = 7
     }
 }
