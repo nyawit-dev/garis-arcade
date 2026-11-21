@@ -2,8 +2,6 @@ import korlibs.image.color.Colors
 import korlibs.korge.Korge
 import korlibs.korge.KorgeDisplayMode
 import korlibs.korge.scene.sceneContainer
-import korlibs.korge.view.position
-import korlibs.korge.view.text
 import korlibs.math.geom.Anchor
 import korlibs.math.geom.ScaleMode
 import korlibs.math.geom.Size
@@ -20,12 +18,5 @@ suspend fun main() = Korge(
     backgroundColor = Colors["#101018"],
     title = "Garis Arcade"
 ) {
-    try {
-        sceneContainer().changeTo { MenuScene() }
-    } catch (t: Throwable) {
-        // Jangan force-close: tampilkan pesan kalau inisialisasi scene gagal.
-        korlibs.korge.view.text("Gagal memulai: ${t.message}", textSize = 20.0) {
-            position(24.0, 60.0)
-        }
-    }
+    sceneContainer().changeTo { MenuScene() }
 }
