@@ -2,6 +2,8 @@ import korlibs.image.color.Colors
 import korlibs.korge.Korge
 import korlibs.korge.KorgeDisplayMode
 import korlibs.korge.scene.sceneContainer
+import korlibs.korge.view.position
+import korlibs.korge.view.text
 import korlibs.math.geom.Anchor
 import korlibs.math.geom.ScaleMode
 import korlibs.math.geom.Size
