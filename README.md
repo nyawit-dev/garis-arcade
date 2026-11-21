@@ -1,17 +1,28 @@
 # Garis Arcade
 
-Arcade game hub built with [KorGE](https://korge.org/) (Kotlin Multiplatform).
+Game jadul (retro) berbasis **KorGE** (Kotlin Multiplatform). Semua build dan rilis dilakukan di GitHub Actions.
 
-- Engine: KorGE 6.0.0
-- Targets: Android (JVM), Desktop (JVM)
-- Release: GitHub Actions builds a signed APK on every `v*` tag
+## Game
+- **Snake** — panah untuk arah, `R` restart, `ESC` menu
+- **2048** — panah untuk geser, `R` restart, `ESC` menu
 
-## Build locally
-
-```bash
-./gradlew :androidApp:assembleDebug
+## Struktur
+```
+src/
+  main.kt                     entry point + ukuran window
+  core/Palette.kt             warna terpusat
+  ui/MenuScene.kt             menu, daftar game
+  games/
+    snake/
+      SnakeEngine.kt          logika murni (tanpa view)
+      SnakeScene.kt           render + input
+    twozerofour/
+      Board2048.kt            logika murni (tanpa view)
+      TwoZeroFourEightScene.kt render + input
+resources/images/             aset pixel-art buatan sendiri
 ```
 
-## License
+Menambah game: buat `Engine` (logika murni) + `Scene` (render/input), lalu daftarkan di `MenuScene.items`.
 
-MPL-2.0 (KorGE engine) / project sources see LICENSE.
+## Build & rilis
+Push tag `v*` → GitHub Actions build APK signed → GitHub Release. JDK 21 diperlukan oleh plugin KorGE.
