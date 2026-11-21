@@ -20,15 +20,22 @@ class TetrisScene : Scene() {
     private var dirty = true
 
     private lateinit var blocks: Array<Bitmap>
+    private lateinit var ghostBitmap: Bitmap
+    private lateinit var boardBitmap: Bitmap
+    private lateinit var nextBitmap: Bitmap
     private lateinit var board: Container
     private lateinit var preview: Container
     private lateinit var hud: Text
     private lateinit var overlay: Text
 
     override suspend fun SContainer.sceneMain() {
+        image(resourcesVfs["images/bg_game.png"].readBitmap()) { position(0.0, 0.0) }
         blocks = (1..7).map { type ->
             resourcesVfs["images/tetris_$type.png"].readBitmap()
         }.toTypedArray()
+        ghostBitmap = resourcesVfs["images/tetris_ghost.png"].readBitmap()
+        boardBitmap = resourcesVfs["images/tetris_bg.png"].readBitmap()
+        nextBitmap = resourcesVfs["images/tetris_next.png"].readBitmap()
 
         hud = text("", textSize = 16.0, color = Palette.text) {
             position(24.0, 44.0)
@@ -85,15 +92,24 @@ class TetrisScene : Scene() {
     private fun render() {
         hud.text = "SCORE ${engine.score}\nLINES ${engine.lines}\nLEVEL ${engine.level}"
         board.removeChildren()
-        board.solidRect(
-            TetrisEngine.COLUMNS * cell,
-            TetrisEngine.ROWS * cell,
-            Palette.wall
-        )
+        board.image(boardBitmap) {
+            position(0.0, 0.0)
+            size(TetrisEngine.COLUMNS * cell, TetrisEngine.ROWS * cell)
+        }
         for (y in 0 until TetrisEngine.ROWS) {
             for (x in 0 until TetrisEngine.COLUMNS) {
                 val type = engine.grid[y][x]
                 if (type != 0) drawBlock(board, type, x, y)
+            }
+        }
+        engine.ghost()?.let { ghost ->
+            if (ghost != engine.current) {
+                engine.cells(ghost).forEach { (x, y) ->
+                    if (y >= 0) board.image(ghostBitmap) {
+                        position(x * cell, y * cell)
+                        size(cell, cell)
+                    }
+                }
             }
         }
         engine.current?.let { piece ->
@@ -103,9 +119,10 @@ class TetrisScene : Scene() {
         }
 
         preview.removeChildren()
+        preview.image(nextBitmap) { size(88.0, 88.0) }
         engine.cells(engine.nextPiece).forEach { (x, y) ->
             preview.image(blocks[engine.nextPiece.type - 1]) {
-                position(x * 12.0, y * 12.0)
+                position(x * 12.0 + 14.0, y * 12.0 + 14.0)
                 size(12.0, 12.0)
             }
         }
