@@ -7,6 +7,7 @@ import korlibs.korge.scene.Scene
 import korlibs.korge.view.*
 import ngga.ring.arcade.core.Palette
 import ngga.ring.arcade.games.snake.SnakeScene
+import ngga.ring.arcade.games.tetris.TetrisScene
 import ngga.ring.arcade.games.twozerofour.TwoZeroFourEightScene
 
 /**
@@ -28,11 +29,14 @@ class MenuScene : Scene() {
             },
             MenuItem("2048", "Gabung angka sampai 2048") {
                 sceneContainer.changeTo<TwoZeroFourEightScene>()
+            },
+            MenuItem("TETRIS", "Susun balok, habisi baris") {
+                sceneContainer.changeTo<TetrisScene>()
             }
         )
 
         items.forEachIndexed { index, item ->
-            val y = 164.0 + index * 76.0
+            val y = 148.0 + index * 72.0
             val card = container { position(sceneWidth / 2 - 190, y) }
             card.solidRect(380.0, 56.0, Palette.panel) {
                 onClickSuspend { item.launch() }
