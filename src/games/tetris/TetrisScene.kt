@@ -14,8 +14,8 @@ import ngga.ring.arcade.ui.MenuScene
 class TetrisScene : Scene() {
     private val engine = TetrisEngine()
     private val cell = 20.0
-    private val boardX = 214.0
-    private val boardY = 44.0
+    private var boardX = 0.0
+    private var boardY = 0.0
     private var frames = 0
     private var dirty = true
 
@@ -29,7 +29,13 @@ class TetrisScene : Scene() {
     private lateinit var overlay: Text
 
     override suspend fun SContainer.sceneMain() {
-        image(resourcesVfs["images/bg_game.png"].readBitmap()) { position(0.0, 0.0) }
+        val w = sceneWidth
+        boardX = (w - TetrisEngine.COLUMNS * cell) / 2.0
+        boardY = 220.0
+
+        image(resourcesVfs["images/bg_game.png"].readBitmap()) {
+            size(w.toDouble(), sceneHeight.toDouble())
+        }
         blocks = (1..7).map { type ->
             resourcesVfs["images/tetris_$type.png"].readBitmap()
         }.toTypedArray()
@@ -37,22 +43,25 @@ class TetrisScene : Scene() {
         boardBitmap = resourcesVfs["images/tetris_bg.png"].readBitmap()
         nextBitmap = resourcesVfs["images/tetris_next.png"].readBitmap()
 
-        hud = text("", textSize = 16.0, color = Palette.text) {
-            position(24.0, 44.0)
+        hud = text("", textSize = 18.0, color = Palette.text) {
+            position(24.0, 220.0)
         }
-        text("NEXT", textSize = 14.0, color = Palette.muted) {
-            position(24.0, 190.0)
+        text("NEXT", textSize = 15.0, color = Palette.muted) {
+            position(24.0, 430.0)
         }
-        preview = container { position(24.0, 214.0) }
-        text("PANAH gerak/rotasi | SPACE drop", textSize = 12.0, color = Palette.muted) {
-            position(24.0, 320.0)
+        preview = container { position(24.0, 458.0) }
+        text("PANAH gerak/rotasi", textSize = 14.0, color = Palette.muted) {
+            position(24.0, 580.0)
         }
-        text("P pause | R restart | ESC menu", textSize = 12.0, color = Palette.muted) {
-            position(24.0, 342.0)
+        text("SPACE drop | P pause", textSize = 14.0, color = Palette.muted) {
+            position(24.0, 606.0)
+        }
+        text("R restart | ESC menu", textSize = 14.0, color = Palette.muted) {
+            position(24.0, 632.0)
         }
         board = container { position(boardX, boardY) }
         overlay = text("", textSize = 20.0, color = Palette.food) {
-            position(boardX + 24.0, boardY + 210.0)
+            position(boardX - 10.0, boardY + 170.0)
             visible = false
         }
 
