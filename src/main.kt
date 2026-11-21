@@ -1,25 +1,15 @@
-import korlibs.korge.Korge
-import korlibs.korge.scene.Scene
-import korlibs.korge.scene.sceneContainer
-import korlibs.korge.view.*
+package ngga.ring.arcade
+
 import korlibs.image.color.Colors
+import korlibs.korge.Korge
+import korlibs.korge.scene.sceneContainer
 import korlibs.math.geom.Size
+import ngga.ring.arcade.ui.MenuScene
 
 suspend fun main() = Korge(
-    windowSize = Size(512, 512),
-    backgroundColor = Colors["#1a1a2e"],
+    windowSize = Size(640, 480),
+    backgroundColor = Colors["#101018"],
     title = "Garis Arcade"
 ) {
     sceneContainer().changeTo { MenuScene() }
-}
-
-class MenuScene : Scene() {
-    override suspend fun SContainer.sceneMain() {
-        text("GARIS ARCADE", textSize = 42.0, color = Colors.WHITE) {
-            position(sceneWidth / 2 - 180, 140.0)
-        }
-        text("KorGE - Kotlin Multiplatform", textSize = 20.0, color = Colors["#a0a0c0"]) {
-            position(sceneWidth / 2 - 140, 210.0)
-        }
-    }
 }
