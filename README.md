@@ -5,6 +5,7 @@ Game jadul (retro) berbasis **KorGE** (Kotlin Multiplatform). Semua build dan ri
 ## Game
 - **Snake** — panah untuk arah, `R` restart, `ESC` menu
 - **2048** — panah untuk geser, `R` restart, `ESC` menu
+- **Tetris** — panah kiri/kanan, `UP` rotasi, `DOWN` soft drop, `SPACE` hard drop, `P` pause, `R` restart, `ESC` menu
 
 ## Struktur
 ```
@@ -16,6 +17,9 @@ src/
     snake/
       SnakeEngine.kt          logika murni (tanpa view)
       SnakeScene.kt           render + input
+    tetris/
+      TetrisEngine.kt         logika murni (grid 10x20, 7-bag, line clear)
+      TetrisScene.kt          render + input
     twozerofour/
       Board2048.kt            logika murni (tanpa view)
       TwoZeroFourEightScene.kt render + input
