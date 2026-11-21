@@ -3,12 +3,7 @@ package ngga.ring.arcade.games.twozerofour
 import korlibs.event.Key
 import korlibs.korge.input.keys
 import korlibs.korge.scene.Scene
-import korlibs.korge.view.SolidRect
-import korlibs.korge.view.Text
-import korlibs.korge.view.container
-import korlibs.korge.view.position
-import korlibs.korge.view.solidRect
-import korlibs.korge.view.text
+import korlibs.korge.view.*
 import ngga.ring.arcade.core.Palette
 import ngga.ring.arcade.ui.MenuScene
 
