@@ -1,6 +1,9 @@
 package ngga.ring.arcade.games.twozerofour
 
 import korlibs.event.Key
+import korlibs.image.bitmap.*
+import korlibs.image.format.readBitmap
+import korlibs.io.file.std.resourcesVfs
 import korlibs.korge.input.keys
 import korlibs.korge.scene.Scene
 import korlibs.korge.view.*
@@ -73,7 +76,7 @@ class TwoZeroFourEightScene : Scene() {
         for (row in 0 until board.size) {
             for (col in 0 until board.size) {
                 val value = board.cells[row][col]
-                tiles[row][col].bitmap = tileBitmaps[value]!!
+                tiles[row][col].bitmap = tileBitmaps[value]!!.slice()
                 labels[row][col].text = if (value == 0) "" else value.toString()
                 labels[row][col].color = Palette.tileText(value)
             }
