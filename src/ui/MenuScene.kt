@@ -4,11 +4,7 @@ import korlibs.image.format.readBitmap
 import korlibs.io.file.std.resourcesVfs
 import korlibs.korge.input.onClickSuspend
 import korlibs.korge.scene.Scene
-import korlibs.korge.view.container
-import korlibs.korge.view.image
-import korlibs.korge.view.position
-import korlibs.korge.view.solidRect
-import korlibs.korge.view.text
+import korlibs.korge.view.*
 import ngga.ring.arcade.core.Palette
 import ngga.ring.arcade.games.snake.SnakeScene
 import ngga.ring.arcade.games.twozerofour.TwoZeroFourEightScene
