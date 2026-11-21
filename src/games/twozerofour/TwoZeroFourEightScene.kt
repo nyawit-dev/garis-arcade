@@ -22,23 +22,33 @@ class TwoZeroFourEightScene : Scene() {
     private lateinit var tileBitmaps: Map<Int, korlibs.image.bitmap.Bitmap>
 
     override suspend fun SContainer.sceneMain() {
-        image(resourcesVfs["images/bg_game.png"].readBitmap()) { position(0.0, 0.0) }
+        val w = sceneWidth
+        val gridSize = board.size * cell
+        val gridX = (w - gridSize) / 2.0
+        val gridY = 240.0
+
+        image(resourcesVfs["images/bg_game.png"].readBitmap()) {
+            size(w.toDouble(), sceneHeight.toDouble())
+        }
         val values = listOf(0, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048)
         tileBitmaps = values.associateWith { value ->
             resourcesVfs["images/tile_$value.png"].readBitmap()
         }
         val boardBitmap = resourcesVfs["images/board_2048.png"].readBitmap()
 
-        hud = text("SCORE 0", textSize = 20.0, color = Palette.text) {
-            position(152.0, 18.0)
+        hud = text("SCORE 0", textSize = 24.0, color = Palette.text) {
+            position(gridX, 120.0)
+        }
+        text("Geser angka | R restart | ESC menu", textSize = 14.0, color = Palette.muted) {
+            position(gridX, 170.0)
         }
         overlay = text("", textSize = 22.0, color = Palette.food) {
-            position(170.0, 430.0)
+            position(gridX + 20.0, 640.0)
             visible = false
         }
 
-        val grid = container { position(152.0, 62.0) }
-        grid.image(boardBitmap) { position(0.0, 0.0); size(348.0, 348.0) }
+        val grid = container { position(gridX, gridY) }
+        grid.image(boardBitmap) { position(0.0, 0.0); size(gridSize, gridSize) }
         tiles = Array(board.size) { row ->
             Array(board.size) { col ->
                 grid.image(tileBitmaps[0]!!) {
@@ -50,7 +60,7 @@ class TwoZeroFourEightScene : Scene() {
         labels = Array(board.size) { row ->
             Array(board.size) { col ->
                 grid.text("", textSize = 30.0, color = Palette.text) {
-                    position(col * cell + 24.0, row * cell + 22.0)
+                    position(col * cell + 26.0, row * cell + 24.0)
                 }
             }
         }
