@@ -10,22 +10,23 @@ import ngga.ring.arcade.games.snake.SnakeScene
 import ngga.ring.arcade.games.tetris.TetrisScene
 import ngga.ring.arcade.games.twozerofour.TwoZeroFourEightScene
 
-/**
- * Menu utama. Menambah game baru cukup menambah satu [MenuItem] ke [items]
- * dan membuat Scene game tersebut.
- */
+/** Menu utama. Semua posisi dihitung dari sceneWidth/sceneHeight (virtual 480x720). */
 class MenuScene : Scene() {
     override suspend fun SContainer.sceneMain() {
+        val w = sceneWidth
+        val h = sceneHeight
+
         image(resourcesVfs["images/bg_menu.png"].readBitmap()) {
-            position(0.0, 0.0)
+            size(w.toDouble(), h.toDouble())
         }
         val cardBitmap = resourcesVfs["images/menu_card.png"].readBitmap()
+
         image(resourcesVfs["images/logo.png"].readBitmap()) {
-            position(sceneWidth / 2 - 128, 26.0)
-            size(256.0, 64.0)
+            position((w - 280) / 2.0, 80.0)
+            size(280.0, 70.0)
         }
-        text("Pilih game jadul", textSize = 20.0, color = Palette.muted) {
-            position(sceneWidth / 2 - 76, 108.0)
+        text("Pilih game jadul", textSize = 22.0, color = Palette.muted) {
+            position((w - 180) / 2.0, 180.0)
         }
 
         val items = listOf(
@@ -40,25 +41,27 @@ class MenuScene : Scene() {
             }
         )
 
+        val cardW = 400.0
+        val cardH = 64.0
         items.forEachIndexed { index, item ->
-            val y = 148.0 + index * 72.0
-            val card = container { position(sceneWidth / 2 - 190, y) }
+            val y = 260.0 + index * 96.0
+            val card = container { position((w - cardW) / 2.0, y) }
             card.image(cardBitmap) {
-                size(380.0, 56.0)
+                size(cardW, cardH)
                 onClickSuspend { item.launch() }
             }
-            card.text(item.title, textSize = 24.0, color = Palette.accent) {
-                position(18.0, 10.0)
+            card.text(item.title, textSize = 26.0, color = Palette.accent) {
+                position(20.0, 19.0)
                 onClickSuspend { item.launch() }
             }
-            card.text(item.subtitle, textSize = 13.0, color = Palette.muted) {
-                position(150.0, 20.0)
+            card.text(item.subtitle, textSize = 14.0, color = Palette.muted) {
+                position(190.0, 26.0)
                 onClickSuspend { item.launch() }
             }
         }
 
-        text("Klik kartu untuk mulai", textSize = 14.0, color = Palette.muted) {
-            position(sceneWidth / 2 - 92, 424.0)
+        text("Ketuk kartu untuk mulai", textSize = 16.0, color = Palette.muted) {
+            position((w - 220) / 2.0, 650.0)
         }
     }
 }
