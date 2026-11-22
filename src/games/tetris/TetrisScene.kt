@@ -7,17 +7,21 @@ import korlibs.io.file.std.resourcesVfs
 import korlibs.korge.input.keys
 import korlibs.korge.scene.Scene
 import korlibs.korge.view.*
+import ngga.ring.arcade.core.Layout
 import ngga.ring.arcade.core.Palette
 import ngga.ring.arcade.ui.MenuScene
 
 /** Render + input Tetris. Semua aturan ada di [TetrisEngine]. */
 class TetrisScene : Scene() {
     private val engine = TetrisEngine()
-    private val cell = 20.0
-    private var boardX = 0.0
-    private var boardY = 0.0
     private var frames = 0
     private var dirty = true
+    private var cell = 20.0
+    private var boardX = 0.0
+    private var boardY = 0.0
+    private var previewX = 0.0
+    private var previewY = 0.0
+    private var scaleFactor = 1.0
 
     private lateinit var blocks: Array<Bitmap>
     private lateinit var ghostBitmap: Bitmap
@@ -29,12 +33,20 @@ class TetrisScene : Scene() {
     private lateinit var overlay: Text
 
     override suspend fun SContainer.sceneMain() {
-        val w = sceneWidth
-        boardX = (w - TetrisEngine.COLUMNS * cell) / 2.0
-        boardY = 220.0
+        val cfg = Layout.compute(sceneWidth, sceneHeight)
+        val root = container {
+            position(cfg.offsetX, cfg.offsetY)
+            scale(cfg.scale)
+        }
+        cell = if (cfg.tablet) 30.0 else 20.0
+        scaleFactor = cell / 20.0
+        boardX = (cfg.width - TetrisEngine.COLUMNS * cell) / 2.0
+        boardY = if (cfg.tablet) 340.0 else 220.0
+        previewX = 24.0
+        previewY = boardY + 200.0
 
-        image(resourcesVfs["images/bg_game.png"].readBitmap()) {
-            size(w.toDouble(), sceneHeight.toDouble())
+        root.image(resourcesVfs["images/bg_game.png"].readBitmap()) {
+            size(cfg.width, cfg.height)
         }
         blocks = (1..7).map { type ->
             resourcesVfs["images/tetris_$type.png"].readBitmap()
@@ -43,25 +55,26 @@ class TetrisScene : Scene() {
         boardBitmap = resourcesVfs["images/tetris_bg.png"].readBitmap()
         nextBitmap = resourcesVfs["images/tetris_next.png"].readBitmap()
 
-        hud = text("", textSize = 18.0, color = Palette.text) {
-            position(24.0, 220.0)
+        hud = root.text("", textSize = 18.0 * scaleFactor, color = Palette.text) {
+            position(24.0, boardY)
         }
-        text("NEXT", textSize = 15.0, color = Palette.muted) {
-            position(24.0, 430.0)
+        root.text("NEXT", textSize = 15.0 * scaleFactor, color = Palette.muted) {
+            position(previewX, previewY - 28.0 * scaleFactor)
         }
-        preview = container { position(24.0, 458.0) }
-        text("PANAH gerak/rotasi", textSize = 14.0, color = Palette.muted) {
-            position(24.0, 580.0)
+        preview = root.container { position(previewX, previewY) }
+        val infoY = previewY + 120.0 * scaleFactor
+        root.text("PANAH gerak/rotasi", textSize = 14.0 * scaleFactor, color = Palette.muted) {
+            position(previewX, infoY)
         }
-        text("SPACE drop | P pause", textSize = 14.0, color = Palette.muted) {
-            position(24.0, 606.0)
+        root.text("SPACE drop | P pause", textSize = 14.0 * scaleFactor, color = Palette.muted) {
+            position(previewX, infoY + 26.0 * scaleFactor)
         }
-        text("R restart | ESC menu", textSize = 14.0, color = Palette.muted) {
-            position(24.0, 632.0)
+        root.text("R restart | ESC menu", textSize = 14.0 * scaleFactor, color = Palette.muted) {
+            position(previewX, infoY + 52.0 * scaleFactor)
         }
-        board = container { position(boardX, boardY) }
-        overlay = text("", textSize = 20.0, color = Palette.food) {
-            position(boardX - 10.0, boardY + 170.0)
+        board = root.container { position(boardX, boardY) }
+        overlay = root.text("", textSize = 20.0 * scaleFactor, color = Palette.food) {
+            position(boardX - 10.0, boardY + 170.0 * scaleFactor)
             visible = false
         }
 
@@ -128,11 +141,11 @@ class TetrisScene : Scene() {
         }
 
         preview.removeChildren()
-        preview.image(nextBitmap) { size(88.0, 88.0) }
+        preview.image(nextBitmap) { size(88.0 * scaleFactor, 88.0 * scaleFactor) }
         engine.cells(engine.nextPiece).forEach { (x, y) ->
             preview.image(blocks[engine.nextPiece.type - 1]) {
-                position(x * 12.0 + 14.0, y * 12.0 + 14.0)
-                size(12.0, 12.0)
+                position(x * 12.0 * scaleFactor + 14.0 * scaleFactor, y * 12.0 * scaleFactor + 14.0 * scaleFactor)
+                size(12.0 * scaleFactor, 12.0 * scaleFactor)
             }
         }
 
