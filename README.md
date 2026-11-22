@@ -12,6 +12,7 @@ Game jadul (retro) berbasis **KorGE** (Kotlin Multiplatform). Semua build dan ri
 src/
   main.kt                     entry point + ukuran window
   core/Palette.kt             warna terpusat
+  core/Layout.kt              preset layout HP (480x720) & tablet (800x1200)
   ui/MenuScene.kt             menu, daftar game
   games/
     snake/
