@@ -7,28 +7,33 @@ import korlibs.io.file.std.resourcesVfs
 import korlibs.korge.input.keys
 import korlibs.korge.scene.Scene
 import korlibs.korge.view.*
+import ngga.ring.arcade.core.Layout
 import ngga.ring.arcade.core.Palette
 import ngga.ring.arcade.ui.MenuScene
 
-/** Renderer + input untuk 2048. Logika ada di [Board2048]. */
+/** Renderer + input 2048. Logika ada di [Board2048]. */
 class TwoZeroFourEightScene : Scene() {
     private val board = Board2048()
-    private val cell = 84.0
 
     private lateinit var tiles: Array<Array<Image>>
     private lateinit var labels: Array<Array<Text>>
     private lateinit var hud: Text
     private lateinit var overlay: Text
-    private lateinit var tileBitmaps: Map<Int, korlibs.image.bitmap.Bitmap>
+    private lateinit var tileBitmaps: Map<Int, Bitmap>
 
     override suspend fun SContainer.sceneMain() {
-        val w = sceneWidth
+        val cfg = Layout.compute(sceneWidth, sceneHeight)
+        val root = container {
+            position(cfg.offsetX, cfg.offsetY)
+            scale(cfg.scale)
+        }
+        val cell = if (cfg.tablet) 130.0 else 84.0
         val gridSize = board.size * cell
-        val gridX = (w - gridSize) / 2.0
-        val gridY = 240.0
+        val gridX = (cfg.width - gridSize) / 2.0
+        val gridY = if (cfg.tablet) 420.0 else 240.0
 
-        image(resourcesVfs["images/bg_game.png"].readBitmap()) {
-            size(w.toDouble(), sceneHeight.toDouble())
+        root.image(resourcesVfs["images/bg_game.png"].readBitmap()) {
+            size(cfg.width, cfg.height)
         }
         val values = listOf(0, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048)
         tileBitmaps = values.associateWith { value ->
@@ -36,18 +41,18 @@ class TwoZeroFourEightScene : Scene() {
         }
         val boardBitmap = resourcesVfs["images/board_2048.png"].readBitmap()
 
-        hud = text("SCORE 0", textSize = 24.0, color = Palette.text) {
-            position(gridX, 120.0)
+        hud = root.text("SCORE 0", textSize = if (cfg.tablet) 32.0 else 24.0, color = Palette.text) {
+            position(gridX, gridY - 120.0)
         }
-        text("Geser angka | R restart | ESC menu", textSize = 14.0, color = Palette.muted) {
-            position(gridX, 170.0)
+        root.text("Geser angka | R restart | ESC menu", textSize = if (cfg.tablet) 18.0 else 14.0, color = Palette.muted) {
+            position(gridX, gridY - 70.0)
         }
-        overlay = text("", textSize = 22.0, color = Palette.food) {
-            position(gridX + 20.0, 640.0)
+        overlay = root.text("", textSize = if (cfg.tablet) 28.0 else 22.0, color = Palette.food) {
+            position(gridX + 20.0, gridY + gridSize + 40.0)
             visible = false
         }
 
-        val grid = container { position(gridX, gridY) }
+        val grid = root.container { position(gridX, gridY) }
         grid.image(boardBitmap) { position(0.0, 0.0); size(gridSize, gridSize) }
         tiles = Array(board.size) { row ->
             Array(board.size) { col ->
@@ -59,8 +64,8 @@ class TwoZeroFourEightScene : Scene() {
         }
         labels = Array(board.size) { row ->
             Array(board.size) { col ->
-                grid.text("", textSize = 30.0, color = Palette.text) {
-                    position(col * cell + 26.0, row * cell + 24.0)
+                grid.text("", textSize = if (cfg.tablet) 44.0 else 30.0, color = Palette.text) {
+                    position(col * cell + cell * 0.31, row * cell + cell * 0.29)
                 }
             }
         }
