@@ -6,28 +6,31 @@ import korlibs.io.file.std.resourcesVfs
 import korlibs.korge.input.keys
 import korlibs.korge.scene.Scene
 import korlibs.korge.view.*
+import ngga.ring.arcade.core.Layout
 import ngga.ring.arcade.core.Palette
-import ngga.ring.arcade.games.snake.Direction
-import ngga.ring.arcade.games.snake.SnakeEngine
 import ngga.ring.arcade.ui.MenuScene
 
-/** Renderer + input untuk Snake. Logika ada di [SnakeEngine]. */
+/** Renderer + input Snake. Logika ada di [SnakeEngine]. */
 class SnakeScene : Scene() {
     private val engine = SnakeEngine()
-    private val cell = 20.0
     private var frames = 0
 
     override suspend fun SContainer.sceneMain() {
-        val w = sceneWidth
+        val cfg = Layout.compute(sceneWidth, sceneHeight)
+        val root = container {
+            position(cfg.offsetX, cfg.offsetY)
+            scale(cfg.scale)
+        }
+        val cell = if (cfg.tablet) 30.0 else 20.0
         val boardW = engine.columns * cell
         val boardH = engine.rows * cell
-        val boardX = (w - boardW) / 2.0
-        val boardY = 240.0
+        val boardX = (cfg.width - boardW) / 2.0
+        val boardY = if (cfg.tablet) 400.0 else 240.0
 
-        image(resourcesVfs["images/bg_game.png"].readBitmap()) {
-            size(w.toDouble(), sceneHeight.toDouble())
+        root.image(resourcesVfs["images/bg_game.png"].readBitmap()) {
+            size(cfg.width, cfg.height)
         }
-        image(resourcesVfs["images/board_frame_snake.png"].readBitmap()) {
+        root.image(resourcesVfs["images/board_frame_snake.png"].readBitmap()) {
             position(boardX - 8.0, boardY - 8.0)
             size(boardW + 16.0, boardH + 16.0)
         }
@@ -41,17 +44,17 @@ class SnakeScene : Scene() {
         val foodBitmap = resourcesVfs["images/food.png"].readBitmap()
         val glowBitmap = resourcesVfs["images/food_glow.png"].readBitmap()
 
-        val hud = text("SCORE 0", textSize = 24.0, color = Palette.text) {
-            position(boardX, 120.0)
+        val hud = root.text("SCORE 0", textSize = if (cfg.tablet) 32.0 else 24.0, color = Palette.text) {
+            position(boardX, boardY - 120.0)
         }
-        text("PANAH arah | R restart | ESC menu", textSize = 14.0, color = Palette.muted) {
-            position(boardX, 170.0)
+        root.text("PANAH arah | R restart | ESC menu", textSize = if (cfg.tablet) 18.0 else 14.0, color = Palette.muted) {
+            position(boardX, boardY - 70.0)
         }
-        val overlay = text("GAME OVER - R", textSize = 24.0, color = Palette.food) {
-            position(boardX + boardW / 2 - 90.0, boardY + boardH / 2)
+        val overlay = root.text("GAME OVER - R", textSize = if (cfg.tablet) 30.0 else 24.0, color = Palette.food) {
+            position(boardX + boardW / 2 - 100.0, boardY + boardH / 2)
             visible = false
         }
-        val board = container { position(boardX, boardY) }
+        val board = root.container { position(boardX, boardY) }
 
         keys {
             justDown(Key.LEFT) { engine.turn(Direction.LEFT) }
@@ -72,7 +75,7 @@ class SnakeScene : Scene() {
             overlay.visible = engine.gameOver
 
             board.removeChildren()
-            board.solidRect(engine.columns * cell, engine.rows * cell, Palette.wall)
+            board.solidRect(boardW, boardH, Palette.wall)
             engine.body.forEachIndexed { index, point ->
                 val bitmap = if (index == 0) (headBitmaps[engine.direction] ?: bodyBitmap) else bodyBitmap
                 board.image(bitmap) {
@@ -82,7 +85,7 @@ class SnakeScene : Scene() {
             }
             board.image(glowBitmap) {
                 position(engine.food.x * cell - 2.0, engine.food.y * cell - 2.0)
-                size(28.0, 28.0)
+                size(cell + 8.0, cell + 8.0)
             }
             board.image(foodBitmap) {
                 position(engine.food.x * cell, engine.food.y * cell)
